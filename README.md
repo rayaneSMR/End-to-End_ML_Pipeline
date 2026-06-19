@@ -1,18 +1,17 @@
-# 📊 End-to-End ML Pipeline: Telco Customer Churn Prediction
+# End-to-End ML Pipeline: Telco Customer Churn Prediction
 
-**DevelopersHub Corporation – AI/ML Engineering Advanced Internship**
 
 A production-ready machine learning pipeline that predicts customer churn for a telecom company using scikit-learn pipelines, hyperparameter tuning, and a Streamlit web interface.
 
 ---
 
-## 🎯 Problem Statement
+## Problem Statement
 
 Build a reusable, production-ready ML pipeline that predicts **customer churn** for a telecom company using the Telco Customer Churn dataset. The system identifies which customers are likely to leave the service so the company can take proactive retention measures.
 
 ---
 
-## ✨ Features
+## Features
 
 ### Core ML Pipeline
 - **Dual Model Architecture**: Logistic Regression and Random Forest classifiers
@@ -22,15 +21,15 @@ Build a reusable, production-ready ML pipeline that predicts **customer churn** 
 - **Cross-Validation**: 5-fold cross-validation for robust evaluation
 
 ### Streamlit Web Interface
-- 🔮 **Interactive Prediction Page**: Real-time churn predictions with probability scores
-- 📈 **Model Information Page**: Detailed model architecture and feature documentation
-- 🎛️ **Model Selector**: Compare predictions between Logistic Regression and Random Forest
-- 📊 **Visual Metrics**: Color-coded alerts (green/red) and confidence scores
-- 🎨 **Professional UI**: Responsive design with custom styling
+- **Interactive Prediction Page**: Real-time churn predictions with probability scores
+- **Model Information Page**: Detailed model architecture and feature documentation
+- **Model Selector**: Compare predictions between Logistic Regression and Random Forest
+- **Visual Metrics**: Color-coded alerts (green/red) and confidence scores
+- **Professional UI**: Responsive design with custom styling
 
 ---
 
-## 📋 Dataset
+## Dataset
 
 **Telco Customer Churn Dataset**
 - **Size**: 7,043 customer records
@@ -58,7 +57,7 @@ Build a reusable, production-ready ML pipeline that predicts **customer churn** 
 
 ---
 
-## 🤖 Models
+## Models
 
 ### 1. Logistic Regression
 - **Type**: Linear classification
@@ -75,7 +74,7 @@ Build a reusable, production-ready ML pipeline that predicts **customer churn** 
 
 ---
 
-## 📦 Project Structure
+## Project Structure
 
 ```
 task2/
@@ -89,7 +88,7 @@ task2/
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Python 3.8+
@@ -128,7 +127,7 @@ http://localhost:8501
 
 ---
 
-## 📖 Usage
+## Usage
 
 ### Web Interface - Prediction Page
 
@@ -165,7 +164,7 @@ jupyter notebook Task2_Churn_Pipeline.ipynb
 
 ---
 
-## 📊 Model Performance
+## Model Performance
 
 ### Metrics Evaluated
 - **Accuracy**: Overall prediction correctness
@@ -184,7 +183,7 @@ jupyter notebook Task2_Churn_Pipeline.ipynb
 
 ---
 
-## 🔧 Technical Stack
+## Technical Stack
 
 ### Libraries
 - **scikit-learn**: ML models, pipelines, preprocessing
@@ -214,12 +213,12 @@ Output: Churn Prediction & Probability
 
 ---
 
-## 🔍 Key Implementation Details
+## Key Implementation Details
 
 ### Data Leakage Prevention
-✅ All preprocessing steps are inside the pipeline
-✅ Scaler fitted only on training data
-✅ Categorical encoder fitted only on training data
+- All preprocessing steps are inside the pipeline
+- Scaler fitted only on training data
+- Categorical encoder fitted only on training data
 
 ### Hyperparameter Tuning
 - **GridSearchCV** with 5-fold cross-validation
@@ -233,7 +232,7 @@ Output: Churn Prediction & Probability
 
 ---
 
-## 📈 Evaluation Reports
+## Evaluation Reports
 
 ### Classification Report
 ```
@@ -257,20 +256,20 @@ Actual No Churn   1050  |  77
 
 ---
 
-## 🎓 Learning Outcomes
+## Learning Outcomes
 
 This project demonstrates:
-- ✅ End-to-end ML pipeline development
-- ✅ Scikit-learn Pipeline API for production ML
-- ✅ Hyperparameter optimization with GridSearchCV
-- ✅ Handling mixed data types (numeric + categorical)
-- ✅ Model evaluation and comparison
-- ✅ Web application development with Streamlit
-- ✅ Version control with Git/GitHub
+- End-to-end ML pipeline development
+- Scikit-learn Pipeline API for production ML
+- Hyperparameter optimization with GridSearchCV
+- Handling mixed data types (numeric + categorical)
+- Model evaluation and comparison
+- Web application development with Streamlit
+- Version control with Git/GitHub
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Streamlit app not starting
 ```bash
@@ -293,7 +292,7 @@ streamlit run streamlit_app.py --server.port 8502
 
 ---
 
-## 📝 Files Description
+## Files Description
 
 | File | Purpose |
 |------|---------|
@@ -305,25 +304,25 @@ streamlit run streamlit_app.py --server.port 8502
 
 ---
 
-## 🔗 GitHub Repository
+## GitHub Repository
 
 **Repository**: [End-to-End_ML_Pipeline](https://github.com/rayaneSMR/End-to-End_ML_Pipeline.git)
 
 ---
 
-## 👤 Author
+## Author
 
 **Smara** - DevelopersHub Corporation AI/ML Engineering Internship
 
 ---
 
-## 📄 License
+## License
 
 This project is open source and available under the MIT License.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Dataset Source**: IBM Telco Customer Churn Dataset
 - **Framework**: Scikit-learn & Streamlit communities
@@ -331,7 +330,7 @@ This project is open source and available under the MIT License.
 
 ---
 
-## 📞 Support & Contact
+## Support & Contact
 
 For issues, questions, or improvements:
 1. Check the troubleshooting section
@@ -340,7 +339,7 @@ For issues, questions, or improvements:
 
 ---
 
-## 🚀 Future Enhancements
+## Future Enhancements
 
 - [ ] Add more classification models (XGBoost, LightGBM, SVM)
 - [ ] Feature importance visualization
@@ -355,4 +354,4 @@ For issues, questions, or improvements:
 
 **Last Updated**: June 19, 2026
 
-**Status**: ✅ Production Ready
+**Status**: Production Ready
