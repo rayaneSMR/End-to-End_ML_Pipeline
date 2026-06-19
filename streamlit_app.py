@@ -32,103 +32,129 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ── Load or Train Model ───────────────────────────────────────────────────────
+# ── Load or Train Models ──────────────────────────────────────────────────────
 @st.cache_resource
-def load_or_train_model():
-    """Load trained model or train a new one."""
-    model_path = "churn_model.pkl"
+def load_or_train_models():
+    """Load trained models or train new ones."""
+    lr_model_path = "churn_model_lr.pkl"
+    rf_model_path = "churn_model_rf.pkl"
     
-    if os.path.exists(model_path):
-        st.info("✅ Loaded pre-trained model")
-        return joblib.load(model_path)
-    else:
-        st.warning("⚠️ No trained model found. Training a new model...")
-        
-        # Load or generate dataset
-        url = "https://raw.githubusercontent.com/IBM/telco-customer-churn-on-icp4d/master/data/Telco-Customer-Churn.csv"
-        try:
-            df = pd.read_csv(url)
-        except Exception:
-            # Fallback: synthetic dataset
-            np.random.seed(42)
-            n = 7043
-            df = pd.DataFrame({
-                'gender': np.random.choice(['Male', 'Female'], n),
-                'SeniorCitizen': np.random.choice([0, 1], n, p=[0.84, 0.16]),
-                'Partner': np.random.choice(['Yes', 'No'], n),
-                'Dependents': np.random.choice(['Yes', 'No'], n, p=[0.3, 0.7]),
-                'tenure': np.random.randint(0, 72, n),
-                'PhoneService': np.random.choice(['Yes', 'No'], n, p=[0.9, 0.1]),
-                'MultipleLines': np.random.choice(['Yes', 'No', 'No phone service'], n),
-                'InternetService': np.random.choice(['DSL', 'Fiber optic', 'No'], n, p=[0.34, 0.44, 0.22]),
-                'OnlineSecurity': np.random.choice(['Yes', 'No', 'No internet service'], n),
-                'OnlineBackup': np.random.choice(['Yes', 'No', 'No internet service'], n),
-                'DeviceProtection': np.random.choice(['Yes', 'No', 'No internet service'], n),
-                'TechSupport': np.random.choice(['Yes', 'No', 'No internet service'], n),
-                'StreamingTV': np.random.choice(['Yes', 'No', 'No internet service'], n),
-                'StreamingMovies': np.random.choice(['Yes', 'No', 'No internet service'], n),
-                'Contract': np.random.choice(['Month-to-month', 'One year', 'Two year'], n, p=[0.55, 0.24, 0.21]),
-                'PaperlessBilling': np.random.choice(['Yes', 'No'], n, p=[0.59, 0.41]),
-                'PaymentMethod': np.random.choice(['Electronic check', 'Mailed check', 'Bank transfer (automatic)', 'Credit card (automatic)'], n),
-                'MonthlyCharges': np.round(np.random.uniform(18, 119, n), 2),
-                'TotalCharges': np.round(np.random.uniform(18, 8500, n), 2),
-                'Churn': np.random.choice(['Yes', 'No'], n, p=[0.265, 0.735])
-            })
-        
-        # Preprocessing
-        df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
-        df['Churn'] = (df['Churn'] == 'Yes').astype(int)
-        
-        if 'customerID' in df.columns:
-            df.drop(columns=['customerID'], inplace=True)
-        
-        X = df.drop(columns=['Churn'])
-        y = df['Churn']
-        
-        numeric_features = X.select_dtypes(include=['int64', 'float64']).columns.tolist()
-        categorical_features = X.select_dtypes(include=['object']).columns.tolist()
-        
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-        
-        # Build pipeline
-        numeric_transformer = Pipeline(steps=[
-            ('imputer', SimpleImputer(strategy='median')),
-            ('scaler', StandardScaler())
-        ])
-        
-        categorical_transformer = Pipeline(steps=[
-            ('imputer', SimpleImputer(strategy='most_frequent')),
-            ('onehot', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
-        ])
-        
-        preprocessor = ColumnTransformer(transformers=[
-            ('num', numeric_transformer, numeric_features),
-            ('cat', categorical_transformer, categorical_features)
-        ])
-        
-        pipeline = Pipeline(steps=[
-            ('preprocessor', preprocessor),
-            ('classifier', RandomForestClassifier(random_state=42, n_jobs=-1, n_estimators=100))
-        ])
-        
-        pipeline.fit(X_train, y_train)
-        
-        # Save model
-        joblib.dump(pipeline, model_path)
-        st.success("✅ Model trained and saved!")
-        
-        return pipeline
+    # Try to load pre-trained models
+    models = {}
+    if os.path.exists(lr_model_path) and os.path.exists(rf_model_path):
+        st.info("✅ Loaded pre-trained models")
+        models['Logistic Regression'] = joblib.load(lr_model_path)
+        models['Random Forest'] = joblib.load(rf_model_path)
+        return models
+    
+    st.warning("⚠️ No trained models found. Training new models...")
+    
+    # Load or generate dataset
+    url = "https://raw.githubusercontent.com/IBM/telco-customer-churn-on-icp4d/master/data/Telco-Customer-Churn.csv"
+    try:
+        df = pd.read_csv(url)
+    except Exception:
+        # Fallback: synthetic dataset
+        np.random.seed(42)
+        n = 7043
+        df = pd.DataFrame({
+            'gender': np.random.choice(['Male', 'Female'], n),
+            'SeniorCitizen': np.random.choice([0, 1], n, p=[0.84, 0.16]),
+            'Partner': np.random.choice(['Yes', 'No'], n),
+            'Dependents': np.random.choice(['Yes', 'No'], n, p=[0.3, 0.7]),
+            'tenure': np.random.randint(0, 72, n),
+            'PhoneService': np.random.choice(['Yes', 'No'], n, p=[0.9, 0.1]),
+            'MultipleLines': np.random.choice(['Yes', 'No', 'No phone service'], n),
+            'InternetService': np.random.choice(['DSL', 'Fiber optic', 'No'], n, p=[0.34, 0.44, 0.22]),
+            'OnlineSecurity': np.random.choice(['Yes', 'No', 'No internet service'], n),
+            'OnlineBackup': np.random.choice(['Yes', 'No', 'No internet service'], n),
+            'DeviceProtection': np.random.choice(['Yes', 'No', 'No internet service'], n),
+            'TechSupport': np.random.choice(['Yes', 'No', 'No internet service'], n),
+            'StreamingTV': np.random.choice(['Yes', 'No', 'No internet service'], n),
+            'StreamingMovies': np.random.choice(['Yes', 'No', 'No internet service'], n),
+            'Contract': np.random.choice(['Month-to-month', 'One year', 'Two year'], n, p=[0.55, 0.24, 0.21]),
+            'PaperlessBilling': np.random.choice(['Yes', 'No'], n, p=[0.59, 0.41]),
+            'PaymentMethod': np.random.choice(['Electronic check', 'Mailed check', 'Bank transfer (automatic)', 'Credit card (automatic)'], n),
+            'MonthlyCharges': np.round(np.random.uniform(18, 119, n), 2),
+            'TotalCharges': np.round(np.random.uniform(18, 8500, n), 2),
+            'Churn': np.random.choice(['Yes', 'No'], n, p=[0.265, 0.735])
+        })
+    
+    # Preprocessing
+    df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
+    df['Churn'] = (df['Churn'] == 'Yes').astype(int)
+    
+    if 'customerID' in df.columns:
+        df.drop(columns=['customerID'], inplace=True)
+    
+    X = df.drop(columns=['Churn'])
+    y = df['Churn']
+    
+    numeric_features = X.select_dtypes(include=['int64', 'float64']).columns.tolist()
+    categorical_features = X.select_dtypes(include=['object']).columns.tolist()
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+    
+    # Build shared preprocessor
+    numeric_transformer = Pipeline(steps=[
+        ('imputer', SimpleImputer(strategy='median')),
+        ('scaler', StandardScaler())
+    ])
+    
+    categorical_transformer = Pipeline(steps=[
+        ('imputer', SimpleImputer(strategy='most_frequent')),
+        ('onehot', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
+    ])
+    
+    preprocessor = ColumnTransformer(transformers=[
+        ('num', numeric_transformer, numeric_features),
+        ('cat', categorical_transformer, categorical_features)
+    ])
+    
+    # Train Logistic Regression
+    lr_pipeline = Pipeline(steps=[
+        ('preprocessor', preprocessor),
+        ('classifier', LogisticRegression(random_state=42, max_iter=1000))
+    ])
+    lr_pipeline.fit(X_train, y_train)
+    joblib.dump(lr_pipeline, lr_model_path)
+    models['Logistic Regression'] = lr_pipeline
+    
+    # Train Random Forest
+    rf_pipeline = Pipeline(steps=[
+        ('preprocessor', preprocessor),
+        ('classifier', RandomForestClassifier(random_state=42, n_jobs=-1, n_estimators=100))
+    ])
+    rf_pipeline.fit(X_train, y_train)
+    joblib.dump(rf_pipeline, rf_model_path)
+    models['Random Forest'] = rf_pipeline
+    
+    st.success("✅ Both models trained and saved!")
+    
+    return models
 
 # ── Main App ──────────────────────────────────────────────────────────────────
 st.title("📊 Telco Customer Churn Predictor")
 st.markdown("---")
 
-# Load model
-model = load_or_train_model()
+# Load models
+models = load_or_train_models()
 
-# Sidebar: Navigation
+# Sidebar: Navigation & Model Selection
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Choose a page:", ["🔮 Make Prediction", "📈 Model Info"])
+
+# Model Selection (only on Prediction page)
+if page == "🔮 Make Prediction":
+    st.sidebar.markdown("---")
+    selected_model = st.sidebar.selectbox(
+        "Choose Model:",
+        list(models.keys()),
+        help="Compare predictions between different models"
+    )
+    model = models[selected_model]
+else:
+    model = models['Random Forest']  # Default for info page
 
 # ── Page 1: Prediction ────────────────────────────────────────────────────────
 if page == "🔮 Make Prediction":
@@ -194,6 +220,9 @@ if page == "🔮 Make Prediction":
         st.markdown("---")
         st.subheader("📋 Prediction Result")
         
+        # Show which model was used
+        st.caption(f"**Model Used:** {selected_model}")
+        
         col1, col2 = st.columns(2)
         
         with col1:
@@ -220,13 +249,30 @@ if page == "🔮 Make Prediction":
 elif page == "📈 Model Info":
     st.subheader("Model Information")
     
-    st.info("""
-    **Model Architecture:**
-    - **Algorithm:** Random Forest Classifier
-    - **Features:** 20 (7 numeric + 13 categorical)
-    - **Target:** Customer Churn (Binary Classification)
-    - **Pipeline:** Preprocessing → Feature Scaling/Encoding → Classification
-    """)
+    # Display both models info
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("### 🔵 Logistic Regression")
+        st.info("""
+        **Characteristics:**
+        - Linear classification model
+        - Interpretable coefficients
+        - Fast training & prediction
+        - Best for understanding feature importance
+        - Good baseline model
+        """)
+    
+    with col2:
+        st.markdown("### 🟢 Random Forest")
+        st.info("""
+        **Characteristics:**
+        - Ensemble of decision trees
+        - Captures non-linear patterns
+        - Robust to outliers
+        - Better generalization
+        - Recommended for production
+        """)
     
     st.subheader("Features Used")
     
